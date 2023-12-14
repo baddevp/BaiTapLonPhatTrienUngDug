@@ -586,7 +586,7 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
 		txt.setText("");
 		JOptionPane.showMessageDialog(this, message);
 	}
-	// Tìm hóa đơn trả hàng theo mã
+	// Tìm nsx trả hàng theo mã
 	public void timKiemTheoMaNSX(String tuKhoa) {
 		modelNSX.setRowCount(0);
 		for (NhaSanXuat nsx : nsx_dao.getAllNSX()) {

@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
@@ -29,6 +32,7 @@ import connectDB.ConnectDB;
 import dao.DAO_MauSac;
 import entity.KhachHang;
 import entity.MauSac;
+import entity.NhaSanXuat;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -184,6 +188,28 @@ public class GuiQuanLyMauSac extends JFrame implements ActionListener, MouseList
 					txtTimKiem.setForeground(Color.GRAY); // Đổi màu chữ gợi ý khi mất focus
 				}
 			}
+		});
+		txtTimKiem.addKeyListener((KeyListener) new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String tuKhoa = txtTimKiem.getText().trim();
+				
+				if (tuKhoa.equals("")) {
+					modelMS.setRowCount(0);
+					loadData(dao_mausac.getAllMauSac());
+
+				}
+				else {
+					if(radMaMau.isSelected()) {
+						timKiemTheoMaMau(tuKhoa);
+					}else if(radTenMau.isSelected()) {
+						timKiemTheoTenMau(tuKhoa);
+					}
+					}
+				}
+				
+				
+
 		});
 
 		JPanel pnlTacVu = new JPanel();
@@ -502,4 +528,30 @@ public class GuiQuanLyMauSac extends JFrame implements ActionListener, MouseList
 		// TODO Auto-generated method stub
 		
 	}
+	// Tìm nsx trả hàng theo mã
+		public void timKiemTheoMaMau(String tuKhoa) {
+			modelMS.setRowCount(0);
+			for (MauSac ms : dao_mausac.getAllMauSac()) {
+				String maMau = ms.getMaMau();
+				if (maMau.toLowerCase().contains(tuKhoa)) {
+					String ma = ms.getMaMau();
+					String tenMau = ms.getTenMau();
+					String row[] = { ma, tenMau};
+					modelMS.addRow(row);
+				}
+			}
+		}
+		// Tìm nsx trả hàng theo mã
+		public void timKiemTheoTenMau(String tuKhoa) {
+			modelMS.setRowCount(0);
+			for (MauSac ms : dao_mausac.getAllMauSac()) {
+				String ten = ms.getTenMau();
+				if (ten.toLowerCase().contains(tuKhoa)) {
+					String ma = ms.getMaMau();
+					String tenMau = ms.getTenMau();
+					String row[] = { ma, tenMau};
+					modelMS.addRow(row);
+				}
+			}
+		}
 }

@@ -145,6 +145,7 @@ import entity.HinhAnh;
 import entity.KhachHang;
 import entity.MauSac;
 import entity.NhanVien;
+import net.sf.jasperreports.compilers.GroovyClassFilter;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -418,16 +419,29 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		JPanel pnlTacVuCon = new JPanel();
 		pnlTacVuCon.setBackground(Color.white);
 		;
-		pnlTacVuCon.setBounds(1286, 11, 598, 58);
+		pnlTacVuCon.setBounds(1286, 0, 608, 80);
 		pnlTacVuCon.setBorder(BorderFactory.createTitledBorder("Tìm kiếm nhân viên : "));
 		pnlTacVu.add(pnlTacVuCon);
 		pnlTacVuCon.setLayout(null);
 
 		txtTimKiem = new JTextField("Nhập thông tin cần tìm");
 		txtTimKiem.setFont(new Font("Times New Roman", Font.PLAIN, 21));
-		txtTimKiem.setBounds(31, 15, 557, 32);
+		txtTimKiem.setBounds(244, 20, 344, 40);
 		pnlTacVuCon.add(txtTimKiem);
 		txtTimKiem.setColumns(10);
+		ButtonGroup group = new ButtonGroup();
+
+		JRadioButton radSDT = new JRadioButton("Số điện thoại");
+		radSDT.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		radSDT.setBounds(19, 20, 137, 23);
+		pnlTacVuCon.add(radSDT);
+
+		JRadioButton radMaNV = new JRadioButton("Mã nhân viên");
+		radMaNV.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		radMaNV.setBounds(19, 45, 137, 23);
+		pnlTacVuCon.add(radMaNV);
+		group.add(radMaNV);
+		group.add(radSDT);
 
 		txtTimKiem.addFocusListener(new FocusListener() {
 			@Override
@@ -446,8 +460,25 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 				}
 			}
 		});
+		txtTimKiem.addKeyListener((KeyListener) new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String tuKhoa = txtTimKiem.getText().trim();
 
-		ButtonGroup group = new ButtonGroup();
+				if (tuKhoa.equals("")) {
+					modelKH.setRowCount(0);
+					DocDuLieuDatabase();
+
+				} else {
+					if (radMaNV.isSelected()) {
+						timKiemTheoMaNV(tuKhoa);
+					} else if (radSDT.isSelected()) {
+						timKiemTheoSDT(tuKhoa);
+					}
+				}
+			}
+
+		});
 
 		JPanel pnlBangKH = new JPanel();
 		pnlBangKH.setBounds(10, 460, 1894, 480);
@@ -476,7 +507,6 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		tblKH.setFont(font2);
 		tblKH.setRowHeight(35);
 		pnlBangKH.add(jScrollPane);
-
 
 		btnDatLai.addActionListener(this);
 		btnChonAnh.addActionListener(this);
@@ -533,8 +563,8 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		if (o.equals(btnDatLai)) {
 			xoaRong();
 		}
-		if (o.equals(btnChonAnh)) {	
-				chonAnh();
+		if (o.equals(btnChonAnh)) {
+			chonAnh();
 		}
 		if (o.equals(btnThem)) {
 			if (btnThem.getText().equals("Thêm")) {
@@ -587,7 +617,7 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 			if (btnThem.getText().equals("Hủy")) {
 				if (validData()) {
 					themNV();
-				}	
+				}
 			}
 			if (btnSua.getText().equals("Hủy")) {
 				if (validData()) {
@@ -605,19 +635,18 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 					String chucVu = cboChucVu.getSelectedItem().toString();
 					ChucVu maCV = chucvu_dao.getChucVuTheoMa(chucVu);
 					HinhAnh maIMG = dao_hinhanh.getHinhAnhTheoMa(maNV);
-					if(changeImagePath != null) {
-						if(maIMG.getUrl().equalsIgnoreCase(changeImagePath) == false) {
-							boolean f = dao_hinhanh.updateIMG(maIMG.getMaAnh(), changeImagePath );
-							if(!f) {
+					if (changeImagePath != null) {
+						if (maIMG.getUrl().equalsIgnoreCase(changeImagePath) == false) {
+							boolean f = dao_hinhanh.updateIMG(maIMG.getMaAnh(), changeImagePath);
+							if (!f) {
 								System.out.println(f);
 								JOptionPane.showMessageDialog(this, "Sửa ảnh không thành công");
 							}
-							
+
 						}
-					}else {
+					} else {
 						maIMG = dao_hinhanh.getHinhAnhTheoMa(maNV);
 					}
-					
 
 					NhanVien nv = new NhanVien(maNV, tenNV, ngaySinh, diaChi, ngayVaoLam, sdt, cccd, gioiTinh, maCV,
 							maIMG);
@@ -647,15 +676,15 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
-			
-			if(btnThem.getText().equals("Hủy")) {
+
+			if (btnThem.getText().equals("Hủy")) {
 				selectedImagePath = selectedFile.getName();
 				ImageIcon icon = new ImageIcon(selectedImagePath);
 				Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
 				lblShowAnh.setIcon(new ImageIcon(GuiQuanLyNhanVien.class.getResource("/image/" + selectedImagePath)));
 				btnChonAnh.setVisible(false);
 			}
-			if(btnSua.getText().equals("Hủy")) {
+			if (btnSua.getText().equals("Hủy")) {
 				changeImagePath = "";
 				changeImagePath = selectedFile.getName();
 				ImageIcon icon = new ImageIcon(changeImagePath);
@@ -663,9 +692,7 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 				lblShowAnh.setIcon(new ImageIcon(GuiQuanLyNhanVien.class.getResource("/image/" + changeImagePath)));
 				btnChonAnh.setVisible(false);
 			}
-			
 
-			
 		}
 	}
 
@@ -750,7 +777,6 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		}
 	}
 
-
 	public void moNutThem() {
 		txtMaNV.setText(generateMaNhanVien());
 		dongMoNhapLieu(true);
@@ -778,8 +804,7 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		String tenNV = txtTenNV.getText().trim();
 		String cccd = txtCCCD.getText().trim();
 		String sdt = txtSDT.getText().trim();
-		
-		
+
 		if (tenNV.length() == 0) {
 			showMessage(txtTenNV, "Nhập tên nhân viên!");
 			return false;
@@ -791,15 +816,17 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		}
 		if (sdt.length() < 10 || sdt.length() > 11) {
 			showMessage(txtSDT, "Nhập SDT gồm 10 hoặc 11 chữ số!");
-			return false;}
-		if (!sdt.matches("^(0[0-9]{9,10})$") ) {
+			return false;
+		}
+		if (!sdt.matches("^(0[0-9]{9,10})$")) {
 			showMessage(txtSDT, "Số điện thoại gồm 10 hoặc 11 chữ số, bắt đầu bằng 0!");
 			return false;
 		}
 		if (cccd.length() != 12) {
 			showMessage(txtCCCD, "Nhập CCCD gồm 12 chữ số!");
-			return false;}
-		if (!cccd.matches("^([0-9]{12})$") ) {
+			return false;
+		}
+		if (!cccd.matches("^([0-9]{12})$")) {
 			showMessage(txtCCCD, "Nhập CCCD gồm 12 chữ số!");
 			return false;
 		}
@@ -953,9 +980,10 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 			NhanVien nv = nhanvien_dao.getNhanVienTheoMa2(maNV);
 			// Hiển thị ảnh lên lblShowAnh
 			if (nv != null) {
-				lblShowAnh.setIcon(new ImageIcon(GuiQuanLyNhanVien.class.getResource("/image/" +nv.getHinhAnh().getUrl())));
+				lblShowAnh.setIcon(
+						new ImageIcon(GuiQuanLyNhanVien.class.getResource("/image/" + nv.getHinhAnh().getUrl())));
 			} else {
-				lblShowAnh.setIcon(new ImageIcon(GuiQuanLyNhanVien.class.getResource("/image/anhmacdinh.png"))); 
+				lblShowAnh.setIcon(new ImageIcon(GuiQuanLyNhanVien.class.getResource("/image/anhmacdinh.png")));
 			}
 
 			//
@@ -991,6 +1019,30 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 			cboGioiTinh.setSelectedItem(gioiTinh);
 			cboChucVu.setSelectedItem(chucvu);
 
+		}
+	}
+
+	// Tìm nsx trả hàng theo mã
+	public void timKiemTheoMaNV(String tuKhoa) {
+		modelKH.setRowCount(0);
+		for (NhanVien nv : nhanvien_dao.getAllNV()) {
+			String ma = nv.getMaNV();
+			if (ma.toLowerCase().contains(tuKhoa)) {
+				modelKH.addRow(new Object[] { nv.getMaNV(), nv.getTenNV(), nv.getCccd(), nv.getNgaySinh(), nv.getSdt(),
+						nv.getDiaChi(), nv.getNgayVaoLam() });
+			}
+		}
+	}
+
+	// Tìm nsx trả hàng theo mã
+	public void timKiemTheoSDT(String tuKhoa) {
+		modelKH.setRowCount(0);
+		for (NhanVien nv : nhanvien_dao.getAllNV()) {
+			String ten = nv.getSdt();
+			if (ten.toLowerCase().contains(tuKhoa)) {
+				modelKH.addRow(new Object[] { nv.getMaNV(), nv.getTenNV(), nv.getCccd(), nv.getNgaySinh(), nv.getSdt(),
+						nv.getDiaChi(), nv.getNgayVaoLam() });
+			}
 		}
 	}
 

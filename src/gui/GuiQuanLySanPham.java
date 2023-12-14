@@ -123,7 +123,6 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 	private JButton btnDatLai;
 	private JComboBox cboLoaiSach;
 	private JComboBox cboNSX;
-	private JComboBox cboTimTinhTrangVPP;
 	private JButton btnDatLai1;
 	private JButton btnXoa1;
 	private JButton btnThem1;
@@ -452,16 +451,6 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 		txtTimTacGia.setColumns(10);
 		txtTimTacGia.setBounds(640, 24, 236, 35);
 		pnlTacVuCon.add(txtTimTacGia);
-		
-		JLabel lblTimTinhTrang = new JLabel("Tình trạng :");
-		lblTimTinhTrang.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-		lblTimTinhTrang.setBounds(940, 24, 120, 35);
-		pnlTacVuCon.add(lblTimTinhTrang);
-		
-		JComboBox cboTimTinhTrangSach = new JComboBox();
-		cboTimTinhTrangSach.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-		cboTimTinhTrangSach.setBounds(1060, 26, 200, 35);
-		pnlTacVuCon.add(cboTimTinhTrangSach);
 		
 		txtTimTenSach.addFocusListener(new FocusListener() {
 			@Override
@@ -832,16 +821,6 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 		txtTimMaVPP.setColumns(10);
 		txtTimMaVPP.setBounds(640, 24, 239, 35);
 		pnlTacVuCon2.add(txtTimMaVPP);
-		
-		JLabel lblTimTinhTrangVPP = new JLabel("Tình trạng :");
-		lblTimTinhTrangVPP.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-		lblTimTinhTrangVPP.setBounds(940, 24, 120, 35);
-		pnlTacVuCon2.add(lblTimTinhTrangVPP);
-		
-		cboTimTinhTrangVPP = new JComboBox();
-		cboTimTinhTrangVPP.setFont(new Font("Times New Roman", Font.PLAIN, 24));
-		cboTimTinhTrangVPP.setBounds(1060, 26, 200, 35);
-		pnlTacVuCon2.add(cboTimTinhTrangVPP);
 		
 		txtTimTenVPP.addFocusListener(new FocusListener() {
 			@Override
