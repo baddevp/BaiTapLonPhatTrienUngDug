@@ -80,7 +80,7 @@ public class DAO_MauSac {
 		int n = 0;
 		try {
 			pstm = con.prepareStatement(
-					"update NHASANXUAT set TENMAU = ? where MAMAU = ?");
+					"update MAUSAC set TENMAU = ? where MAMAU = ?");
 			pstm.setString(2, ms.getMaMau());
 			pstm.setString(1, ms.getTenMau());
 			n = pstm.executeUpdate();

@@ -438,7 +438,10 @@ public class GuiQuanLyKhachHang extends JFrame implements ActionListener, MouseL
 			}
 		}if (o.equals(btnLuu)) {
 			if (btnThem.getText().equals("Hủy")) {
-				themKH();
+				if(validData()) {
+					themKH();
+				}
+				
 			}
 			if (btnSua.getText().equals("Hủy")) {
 				if (validData()) {
@@ -471,14 +474,42 @@ public class GuiQuanLyKhachHang extends JFrame implements ActionListener, MouseL
 	}
 
 	private boolean validData() {
-		String tenMau = txtTenKH.getText().trim();
-		if (tenMau.length() == 0) {
-			showMessage(txtTenKH, "Nhập tên kháchh hàng!");
+		String tenNV = txtTenKH.getText().trim();
+		String diaChi = txtDiaChi.getText().trim();
+		String sdt = txtSDT.getText().trim();
+		String email = txtEmail.getText().trim();
+		
+		
+		if (tenNV.length() == 0) {
+			showMessage(txtTenKH, "Nhập tên khách hàng!");
 			return false;
 		}
-		if (!tenMau.matches(
-				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
-			showMessage(txtTenKH, "Tên khách hàng bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+		if (!tenNV.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ]*\\s?)+$")) {
+			showMessage(txtTenKH, "Tên khách hàng bao gồm chữ cái, không bao gồm chữ số tiếng Việt,  ký tự đặc biệt!");
+			return false;
+		}
+		if (email.length() == 0) {
+			showMessage(txtEmail, "Nhập email nhà sản xuất!");
+			return false;
+		}
+		if (!email.matches(
+				"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+			showMessage(txtEmail, "Vui lòng nhập lại email!");
+			return false;
+		}
+		if (sdt.length() < 10 || sdt.length() > 11) {
+			showMessage(txtSDT, "Nhập SDT gồm 10 hoặc 11 chữ số!");
+			return false;}
+		if (!sdt.matches("^(0[0-9]{9,10})$") ) {
+			showMessage(txtSDT, "Số điện thoại gồm 10 hoặc 11 chữ số, bắt đầu bằng 0!");
+			return false;
+		}
+		if (diaChi.length() == 0) {
+			showMessage(txtDiaChi, "Nhập địa chỉ khách hàng!");
+			return false;}
+		if (!diaChi.matches("^([0-9]{12})$") ) {
+			showMessage(txtDiaChi, "Địa chỉ khách hàng bao gồm chữ cái, chữ số tiếng Việt, không bao gồm  ký tự đặc biệt!");
 			return false;
 		}
 

@@ -50,7 +50,7 @@ public class GuiQuanLyLoaiSach extends JFrame implements ActionListener, MouseLi
 	private JTextField txtTimKiem;
 	private DefaultTableModel modelLoaiSach;
 	private JTable tblLS;
-	private JTextField txtTrangThai;
+
 	private ButtonGroup group;
 	private JButton btnDatLai;
 	private JButton btnLuu;
@@ -283,13 +283,6 @@ public class GuiQuanLyLoaiSach extends JFrame implements ActionListener, MouseLi
 		tblLS.setRowHeight(35);
 		pnlBangLoaiSach.add(jScrollPane);
 		
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(10, 945, 1894, 20);
-		contentPane.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
-		
 		//
 		tblLS.addMouseListener(this);
 		btnDatLai.addActionListener(this);
@@ -373,8 +366,9 @@ public class GuiQuanLyLoaiSach extends JFrame implements ActionListener, MouseLi
 			}
 		}if (o.equals(btnLuu)) {
 			if (btnThem.getText().equals("Hủy")) {
-				themLS();
-				
+				if(validData()) {
+					themLS();
+				}
 			}
 			if (btnSua.getText().equals("Hủy")) {
 				if (validData()) {
@@ -479,14 +473,34 @@ public class GuiQuanLyLoaiSach extends JFrame implements ActionListener, MouseLi
 		}
 	}
 	private boolean validData() {
-		String tenMau  = txtTenLoaiSach.getText().trim();
-		if (tenMau.length() == 0) {
-			showMessage(txtTenLoaiSach, "Nhập tên màu sắc!");
+		String tenLoai  = txtTenLoaiSach.getText().trim();
+		String moTa  = txtMoTa.getText().trim();
+		String vat = txtVAT.getText().trim();
+		double soVAT = Double.parseDouble(vat);
+		if (tenLoai.length() == 0) {
+			showMessage(txtTenLoaiSach, "Nhập tên loại sách!");
 			return false;
 		}
-		if (!tenMau.matches(
+		if (!tenLoai.matches(
 				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
-			showMessage(txtTenLoaiSach, "Tên màu sắc bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			showMessage(txtTenLoaiSach, "Tên loại sách bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			return false;
+		}
+		if (moTa.length() == 0) {
+			showMessage(txtMoTa, "Nhập mô tả!");
+			return false;
+		}
+		if (!moTa.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
+			showMessage(txtMoTa, "Mô tả bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			return false;
+		}
+		if (vat.length() == 0) {
+			showMessage(txtVAT, "Nhập thuế vat!");
+			return false;
+		}
+		if (soVAT < 0 | soVAT > 1) {
+			showMessage(txtVAT, "Thuế giá trị gia tăng đúng là từ [0-1]");
 			return false;
 		}
 		

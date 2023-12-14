@@ -110,11 +110,8 @@ public class DAO_ChiTietHoaDon {
 			pstm.setString(1, maHD);
 			pstm.setString(2, maSP);
 			ResultSet rs = pstm.executeQuery();
-			while (rs.next()) {
-				
-				rs.getInt("SOLUONG");
-				
-				
+			while (rs.next()) {			
+				sl += rs.getInt("SOLUONG");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -81,7 +81,7 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 	private JTextField txtTenVPP;
 	private JButton btnChonAnhVPP;
 	private JTextField txtTimTenVPP;
-	private JTextField txtTrangThai;
+
 	private JTable tblSach;
 	private JTable tblVPP;
 	private DefaultTableModel modelSach;
@@ -535,13 +535,7 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 		tblSach.setFont(font2);
 		tblSach.setRowHeight(35);
 		pnlBangSach.add(jScrollPane);
-		
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(0, 915, 1894, 20);
-		pnlSach.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
+
 		
 		JPanel pnlChucNang = new JPanel();
 		pnlChucNang.setBackground(new Color(255, 255, 255));
@@ -922,13 +916,7 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 		tblVPP.setFont(font2);
 		tblVPP.setRowHeight(35);
 		pnlBangVPP.add(jScrollPane1);
-		
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(0, 915, 1894, 20);
-		pnlVanPhongPham.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
+
 		
 		JPanel pnlChucNang1 = new JPanel();
 		pnlChucNang1.setBackground(new Color(255, 255, 255));
@@ -1288,7 +1276,9 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 		}
 		if (o.equals(btnLuu)) {
 			if (btnThem.getText().equals("Hủy")) {
-				themSach();
+				if (validData()) {
+					themSach();
+				}
 			}
 			if (btnSua.getText().equals("Hủy")) {
 				if (validData()) {
@@ -1421,7 +1411,10 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 		}
 		if (o.equals(btnLuu1)) {
 			if (btnThem1.getText().equals("Hủy")) {
-				themVPP();
+				if (validData()) {
+					themVPP();
+				}
+				
 			}
 			if (btnSua1.getText().equals("Hủy")) {
 				if (validDataVPP()) {
@@ -1529,17 +1522,74 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 		btnChonAnh.setEnabled(b);	
 	}
 	private boolean validData() {
-		String tenMau = txtTenSach.getText().trim();
-		if (tenMau.length() == 0) {
-			showMessage(txtTenSach, "Nhập tên màu sắc!");
+        String tenS = txtTenSach.getText();
+        String tacGia = txtTacGia.getText();
+        int soTrang = Integer.parseInt(txtSoTrang.getText());
+        double giaGoc = Double.parseDouble(txtGiaGoc.getText());
+        int soLuong = Integer.parseInt(txtSoLuong.getText());
+        String tt = cboTinhTrang.getSelectedItem().toString();
+        String maKM = txtKhuyenMai.getText();
+        String moTa = txtMoTa.getText();
+		if (tenS.length() == 0) {
+			showMessage(txtTenSach, "Nhập tên sách!");
 			return false;
 		}
-		if (!tenMau.matches(
+		if (!tenS.matches(
 				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
-			showMessage(txtTenSach, "Tên màu sắc bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			showMessage(txtTenSach, "Tên sách bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
 			return false;
 		}
-
+		if (tacGia.length() == 0) {
+			showMessage(txtMoTa, "Nhập tên tác giả!");
+			return false;
+		}
+		if (!tacGia.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ]*\\s?)+$")) {
+			showMessage(txtTacGia, "Tên tác giả bao gồm chữ cái,  không bao gồm chữ số tiếng Việt, ký tự đặc biệt!");
+			return false;
+		}
+		if (moTa.length() == 0) {
+			showMessage(txtMoTa, "Nhập mô tả sách!");
+			return false;
+		}
+		if (!moTa.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
+			showMessage(txtMoTa, "Mô tả bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			return false;
+		}
+		if (txtSoTrang.getText().length() == 0) {
+			showMessage(txtSoTrang, "Nhập số trang sách!");
+			return false;
+		}
+		if (soTrang < 2) {
+			showMessage(txtSoTrang, "Số trang không đúng");
+			return false;
+		}
+		if (txtSoLuong.getText().length() == 0) {
+			showMessage(txtSoLuong, "Nhập số trang sách!");
+			return false;
+		}
+		if (soLuong < 0) {
+			showMessage(txtSoLuong, "Số trang không đúng");
+			return false;
+		}
+		if (txtGiaGoc.getText().length() == 0) {
+			showMessage(txtGiaGoc, "Nhập giá nhập sách!");
+			return false;
+		}
+		if (giaGoc < 1000) {
+			showMessage(txtGiaGoc, "Giá nhập không đúng");
+			return false;
+		}
+		if (txtKhuyenMai.getText().length() == 0) {
+			showMessage(txtKhuyenMai, "Nhập giá mã khuyến mãi!");
+			return false;
+		}
+		if (!maKM.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
+			showMessage(txtKhuyenMai, "Mã khuyến mãi bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			return false;
+		}
 		return true;
 	}
 	private void showMessage(JTextField txt, String message) {
@@ -1663,17 +1713,74 @@ public class GuiQuanLySanPham extends JFrame implements ActionListener, MouseLis
 			btnChonAnhVPP.setEnabled(b);	
 		}
 		private boolean validDataVPP() {
-			String tenMau = txtTenVPP.getText().trim();
-			if (tenMau.length() == 0) {
-				showMessage(txtTenVPP, "Nhập tên màu sắc!");
+	        String tenVPP = txtTenVPP.getText();
+	        String thuongHieu = txtThuongHieu.getText();
+	        String xuatXu = txtXuatXu.getText();
+	        double giaGocVPP = Double.parseDouble(txtGiaGocVPP.getText());
+	        int soLuongVPP = Integer.parseInt(txtSoLuongVPP.getText());
+	        String maKM = txtKhuyenMaiVPP.getText();
+	        String moTa = txtMoTaVPP.getText();
+			if (tenVPP.length() == 0) {
+				showMessage(txtTenVPP, "Nhập tên văn phòng phẩm!");
 				return false;
 			}
-			if (!tenMau.matches(
+			if (!tenVPP.matches(
 					"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
-				showMessage(txtTenVPP, "Tên màu sắc bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+				showMessage(txtTenVPP, "Tên văn phòng phẩm bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
 				return false;
 			}
-
+			if (thuongHieu.length() == 0) {
+				showMessage(txtThuongHieu, "Nhập thương hiệu!");
+				return false;
+			}
+			if (!thuongHieu.matches(
+					"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ]*\\s?)+$")) {
+				showMessage(txtThuongHieu, "Tên thương hiệu bao gồm chữ cái,  không bao gồm chữ số tiếng Việt, ký tự đặc biệt!");
+				return false;
+			}
+			if (moTa.length() == 0) {
+				showMessage(txtMoTaVPP, "Nhập mô tả văn phòng phẩm!");
+				return false;
+			}
+			if (!moTa.matches(
+					"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
+				showMessage(txtMoTaVPP, "Mô tả bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+				return false;
+			}
+			if (!xuatXu.matches(
+					"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ]*\\s?)+$")) {
+				showMessage(txtXuatXu, "Xuất xứ bao gồm chữ cái,  không bao gồm chữ số tiếng Việt, ký tự đặc biệt!");
+				return false;
+			}
+			if (xuatXu.length() == 0) {
+				showMessage(txtXuatXu, "Nhập thông tin xuất xứ");
+				return false;
+			}
+			if (txtSoLuongVPP.getText().length() == 0) {
+				showMessage(txtSoLuongVPP, "Nhập số lượng!");
+				return false;
+			}
+			if (soLuongVPP < 0) {
+				showMessage(txtSoLuongVPP, "Số lượng không đúng");
+				return false;
+			}
+			if (txtGiaGocVPP.getText().length() == 0) {
+				showMessage(txtGiaGocVPP, "Nhập giá nhập sách!");
+				return false;
+			}
+			if (giaGocVPP >= 1000) {
+				showMessage(txtGiaGocVPP, "Giá nhập không đúng");
+				return false;
+			}
+			if (txtKhuyenMaiVPP.getText().length() == 0) {
+				showMessage(txtKhuyenMaiVPP, "Nhập giá mã khuyến mãi!");
+				return false;
+			}
+			if (!maKM.matches(
+					"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
+				showMessage(txtKhuyenMaiVPP, "Mã khuyến mãi bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+				return false;
+			}
 			return true;
 		}
 		public void chonAnhVPP() {

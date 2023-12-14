@@ -439,13 +439,11 @@ public class GuiDangNhap extends JFrame implements ActionListener {
 		guiTrangChu = new GuiTrangChu(txtTenDN, txtMK);
 		guiTrangChu.setVisible(true);
 		nhanvien_dao = new DAO_NhanVien();
-		ArrayList<NhanVien> listNV = nhanvien_dao.getNhanVienTheoMa(user);
-
-		for (NhanVien nv : listNV) {
-			guiTrangChu.txtTenTK.setText(nv.getTenNV());
+		NhanVien nv = dao_NhanVien.getNhanVienTheoMa2(txtTenDN.getText().trim());
+		guiTrangChu.txtTenTK.setText(nv.getTenNV()+ "  -  " + nv.getChucVu().getTenChucVu());
 		}
 
-	}
+	
 
 	// Xác nhận danh tính
 	void xacNhanDanhTinh() {
@@ -514,7 +512,7 @@ public class GuiDangNhap extends JFrame implements ActionListener {
 
 	private boolean setLaiMatKhau() {
 		String mkMoi = generateRandomDigits(6);
-		JOptionPane.showMessageDialog(this, "Mật khẩu mới của bạn là" + mkMoi);
+		JOptionPane.showMessageDialog(this, "Mật khẩu mới của bạn là " + mkMoi);
 		boolean f = (dao_TaiKhoan.suaMatKhau(txtTenDN.getText(), mkMoi));
 		if (f) {
 			return true;

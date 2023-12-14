@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -16,7 +17,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -79,6 +82,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.toedter.calendar.JDateChooser;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
@@ -419,7 +423,8 @@ public class GuiInLaiHoaDon extends JFrame implements ActionListener, MouseListe
 	        	
 	            // Đặt tên file PDF và tạo đối tượng PdfWriter
 	        	String maHD = hd.getMaYeuCauTraHang();
-	            String fileName = "HoaDon_" + maHD + ".pdf";
+	        	String hdMua = hd.getHoaDon().getMaHoaDon();
+	        	String fileName = "THInLai_" + maHD.substring(10, 15) + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf";
 	            PdfWriter.getInstance(document, new FileOutputStream(fileName));
 
 	            // Mở document để bắt đầu viết
@@ -475,15 +480,17 @@ public class GuiInLaiHoaDon extends JFrame implements ActionListener, MouseListe
 	            for(ChiTietHoanTra ct : dao_chiTietTra.getDSTHTheoMaYCHT(maHD)) {
 	            	//Thêm tên sản phẩm
 	            	PdfPCell cellSP = new PdfPCell(new Paragraph(ct.getSanPham().getTenSanPham(), font));
-	            	int soLuongMua = dao_CTHD.laySoLuongSanPhamDaMua(maHD, ct.getSanPham().getMaSanPham());
+	            	int soLuongMua = dao_CTHD.laySoLuongSanPhamDaMua(hdMua, ct.getSanPham().getMaSanPham());
 	            	tongSoMua += soLuongMua;
 	            	PdfPCell cellSL = new PdfPCell(new Paragraph(soLuongMua + "", font));
 	            	double giaBan = ct.getSanPham().getGiaBan();
 	            	tienDaMua += soLuongMua * giaBan;
 	            	PdfPCell cellGia = new PdfPCell(new Paragraph(giaBan + "", font));
-	            	int soTra = ct.getSoLuongTra();
+	            	int soTra = dao_chiTietTra.laySoLuongSanPhamDaTra(maHD, ct.getSanPham().getMaSanPham());
+	            	tongSoTra += soTra;
 	            	PdfPCell cellSoLuongTra = new PdfPCell(new Paragraph(soTra + "", font));
 	            	double thanhTien = soTra * giaBan;
+	            	tongTienTra += thanhTien;
 	            	PdfPCell cellThanhTien = new PdfPCell(new Paragraph(thanhTien + "", font));
 	            	
 	            	  cellSP.setBorder(PdfPCell.NO_BORDER);
@@ -589,6 +596,7 @@ public class GuiInLaiHoaDon extends JFrame implements ActionListener, MouseListe
 
 	            // Hiển thị thông báo thành công
 	            JOptionPane.showMessageDialog(this, "Hóa đơn đã được xuất thành công.");
+	            openPdfFile(fileName);
 
 	        } catch (Exception ex) {
 	            ex.printStackTrace();
@@ -625,7 +633,7 @@ public class GuiInLaiHoaDon extends JFrame implements ActionListener, MouseListe
 	        	
 	            // Đặt tên file PDF và tạo đối tượng PdfWriter
 	        	String maHD = hd.getMaHoaDon();
-	            String fileName = "HoaDon_" + maHD + ".pdf";
+	            String fileName = "HDInLai_" + maHD.substring(10, 15)+ "_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf";
 	            PdfWriter.getInstance(document, new FileOutputStream(fileName));
 
 	            // Mở document để bắt đầu viết
@@ -815,10 +823,20 @@ public class GuiInLaiHoaDon extends JFrame implements ActionListener, MouseListe
 
 	            // Hiển thị thông báo thành công
 	            JOptionPane.showMessageDialog(this, "Hóa đơn đã được xuất thành công.");
-
+	            openPdfFile(fileName);
 	        } catch (Exception ex) {
 	            ex.printStackTrace();
 	            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi xuất hóa đơn.");
+	        }
+	    }
+		private static void openPdfFile(String filePath) throws IOException {
+	        File pdfFile = new File(filePath);
+
+	        if (pdfFile.exists()) {
+	            Desktop desktop = Desktop.getDesktop();
+	            desktop.open(pdfFile);
+	        } else {
+	            System.out.println("The specified PDF file does not exist.");
 	        }
 	    }
 }

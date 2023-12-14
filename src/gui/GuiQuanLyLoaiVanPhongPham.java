@@ -52,7 +52,7 @@ public class GuiQuanLyLoaiVanPhongPham extends JFrame implements ActionListener,
 	private JTextField txtTimKiem;
 	private DefaultTableModel modelLoaiVPP;
 	private JTable tblVPP;
-	private JTextField txtTrangThai;
+
 	private ButtonGroup group;
 	private JRadioButton radTenLoaiVPP;
 	private JRadioButton radMaLoaiVPP;
@@ -290,13 +290,6 @@ public class GuiQuanLyLoaiVanPhongPham extends JFrame implements ActionListener,
 		tblVPP.setRowHeight(35);
 		pnlBangLoaiVPP.add(jScrollPane);
 		
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(10, 945, 1894, 20);
-		contentPane.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
-		
 		try {
 			ConnectDB.getInstance().connect();
 			DocDuLieuDatabase();
@@ -374,7 +367,10 @@ public class GuiQuanLyLoaiVanPhongPham extends JFrame implements ActionListener,
 			}
 		}if (o.equals(btnLuu)) {
 			if (btnThem.getText().equals("Hủy")) {
-				themLoaiVPP();
+				if(validData()) {
+					themLoaiVPP();
+				}
+				
 				
 			}
 			if (btnSua.getText().equals("Hủy")) {
@@ -401,14 +397,34 @@ public class GuiQuanLyLoaiVanPhongPham extends JFrame implements ActionListener,
 
 	}
 	private boolean validData() {
-		String tenMau  = txtTenLoaiVPP.getText().trim();
-		if (tenMau.length() == 0) {
-			showMessage(txtTenLoaiVPP, "Nhập tên màu sắc!");
+		String tenLoai  = txtTenLoaiVPP.getText().trim();
+		String moTa  = txtMoTa.getText().trim();
+		String vat = txtVAT.getText().trim();
+		double soVAT = Double.parseDouble(vat);
+		if (tenLoai.length() == 0) {
+			showMessage(txtTenLoaiVPP, "Nhập tên loại văn phòng phẩm!");
 			return false;
 		}
-		if (!tenMau.matches(
+		if (!tenLoai.matches(
 				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
-			showMessage(txtTenLoaiVPP, "Tên màu sắc bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			showMessage(txtTenLoaiVPP, "Tên loại văn phòng phẩm bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			return false;
+		}
+		if (moTa.length() == 0) {
+			showMessage(txtMoTa, "Nhập mô tả!");
+			return false;
+		}
+		if (!moTa.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
+			showMessage(txtMoTa, "Mô tả bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			return false;
+		}
+		if (vat.length() == 0) {
+			showMessage(txtVAT, "Nhập thuế vat!");
+			return false;
+		}
+		if (soVAT < 0 | soVAT > 1) {
+			showMessage(txtVAT, "Thuế giá trị gia tăng đúng là từ [0-1]");
 			return false;
 		}
 		

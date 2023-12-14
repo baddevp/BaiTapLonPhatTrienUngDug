@@ -47,11 +47,11 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 
 	public static JPanel contentPane;
 	private JTextField txtMaNSX;
-	private JTextField txtTenNSX;
+	private JTextField txtTenChucVu;
 	private JTextField txtTimKiem;
 	private DefaultTableModel modelCV;
 	private JTable tblCV;
-	private JTextField txtTrangThai;
+
 	private ButtonGroup group;
 	private JButton btnThem;
 	private JButton btnSua;
@@ -138,11 +138,11 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 		pnlThongTinKH.add(txtMaNSX);
 		txtMaNSX.setColumns(10);
 		
-		txtTenNSX = new JTextField();
-		txtTenNSX.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		txtTenNSX.setColumns(10);
-		txtTenNSX.setBounds(20, 240, 319, 40);
-		pnlThongTinKH.add(txtTenNSX);
+		txtTenChucVu = new JTextField();
+		txtTenChucVu.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		txtTenChucVu.setColumns(10);
+		txtTenChucVu.setBounds(20, 240, 319, 40);
+		pnlThongTinKH.add(txtTenChucVu);
 		
 		JPanel pnlTacVuCon = new JPanel();
 		pnlTacVuCon.setBounds(9, 742, 330, 102);
@@ -254,13 +254,7 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 		tblCV.setFont(font2);
 		tblCV.setRowHeight(35);
 		pnlBangCV.add(jScrollPane);
-		
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(10, 945, 1894, 20);
-		contentPane.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
+
 		
 		tblCV.addMouseListener(this);
 		btnDatLai.addActionListener(this);
@@ -299,13 +293,20 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 			xoa();
 		}
 		if (o.equals(btnThem)) {
-			themCV();
+			if(validData()) {
+				themCV();
+			}
+			
 		}
 		if (o.equals(btnSua)) {
 			btSua();
 		}
 		if (o.equals(btnLuu)) {
-			updateCV();
+			if(validData()) {
+				updateCV();
+				btLuu();
+			}
+		
 		}
 	}
 	
@@ -327,10 +328,10 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 	// nút dặt lại
 	public void xoaRong() {
 		id();
-		txtTenNSX.setText("");
+		txtTenChucVu.setText("");
 		txtTimKiem.setText("");
-		txtTenNSX.setEditable(true);
-		txtTenNSX.requestFocus();
+		txtTenChucVu.setEditable(true);
+		txtTenChucVu.requestFocus();
 		btnLuu.setEnabled(false);
 		tblCV.clearSelection();
 	}
@@ -356,7 +357,7 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 	
 	// Nút thêm
 	private void themCV() {
-		String tenCV = txtTenNSX.getText();
+		String tenCV = txtTenChucVu.getText();
 		String newMaChucVu = chucvu_dao.generateNewMaChucVu();
 		txtMaNSX.setText(newMaChucVu);
 		ChucVu cv = new ChucVu(newMaChucVu, tenCV);
@@ -374,11 +375,21 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 	    if (row == -1) {
 	        JOptionPane.showMessageDialog(this, "Hãy chọn chức vụ cần sửa");
 	    } else {
-	        txtTenNSX.setEditable(true);
-	        txtTenNSX.requestFocus();
+	        txtTenChucVu.setEditable(true);
+	        txtTenChucVu.requestFocus();
 	        btnSua.setEnabled(false); // Disable the "Sửa" button
 	        btnLuu.setEnabled(true);
+	        btnThem.setEnabled(false);
 	    }
+	}
+	private void btLuu() {
+	
+	        txtTenChucVu.setEditable(true);
+	        txtTenChucVu.requestFocus();
+	        btnSua.setEnabled(true); // Disable the "Sửa" button
+	        btnLuu.setEnabled(false);
+	        btnThem.setEnabled(true);
+	    
 	}
 	
 	private void updateCV() {
@@ -388,7 +399,7 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 	        JOptionPane.showMessageDialog(this, "Hãy chọn chức vụ cần sửa");
 	    } else {
 	        String maChucVu = txtMaNSX.getText();
-	        String tenChucVu = txtTenNSX.getText();
+	        String tenChucVu = txtTenChucVu.getText();
 
 	        if (chucvu_dao.updateCV(maChucVu, tenChucVu)) {
 	            modelCV.setValueAt(maChucVu, selectedRow, 0);
@@ -404,6 +415,25 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 	    }
 	}
 
+	private boolean validData() {
+		String tenMau  = txtTenChucVu.getText().trim();
+		
+		if (tenMau.length() == 0) {
+			showMessage(txtTenChucVu, "Nhập tên chức vụ!");
+			return false;
+		}
+		if (!tenMau.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
+			showMessage(txtTenChucVu, "Tên chức vụ bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+			return false;
+		}
+		
+		return true;
+	}
+	private void showMessage(JTextField txt, String message) {
+		txt.setText("");
+		JOptionPane.showMessageDialog(this, message);
+	}
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		// TODO Auto-generated method stub
@@ -415,9 +445,10 @@ public class GuiQuanLyChucVu extends JFrame implements ActionListener, MouseList
 		// TODO Auto-generated method stub
 		int row = 	tblCV.getSelectedRow();
 		txtMaNSX.setText(tblCV.getValueAt(row, 0).toString());
-		txtTenNSX.setText(tblCV.getValueAt(row, 1).toString());
-		txtTenNSX.setEditable(false);
+		txtTenChucVu.setText(tblCV.getValueAt(row, 1).toString());
+		txtTenChucVu.setEditable(false);
 	}
+	
 
 	@Override
 	public void mousePressed(MouseEvent e) {

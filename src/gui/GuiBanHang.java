@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -20,6 +21,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
@@ -1318,8 +1321,8 @@ public class GuiBanHang extends JFrame implements ActionListener, MouseListener 
         	com.itextpdf.text.Font font = new com.itextpdf.text.Font(baseFont, 12, Font.PLAIN);
         	
             // Đặt tên file PDF và tạo đối tượng PdfWriter
-        	String maHD = txtMaHD.getText();
-            String fileName = "HoaDon_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf";
+        	String maHD = txtMaHD.getText();//HD14122023001001
+            String fileName = "HD_" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "_"+maHD.substring(10, 15) + ".pdf";
             PdfWriter.getInstance(document, new FileOutputStream(fileName));
 
             // Mở document để bắt đầu viết
@@ -1349,33 +1352,39 @@ public class GuiBanHang extends JFrame implements ActionListener, MouseListener 
             document.add(new Paragraph("Thu Ngân: " + tenNhanVien, font));
             document.add(new Paragraph("\n"));
             // Tạo bảng cho sản phẩm trong hóa đơn
-            PdfPTable table = new PdfPTable(3);
+            PdfPTable table = new PdfPTable(4);
             table.setWidthPercentage(100);
 
             // Thêm font cho header của bảng
             PdfPCell cellHeadTenSP = new PdfPCell(new Paragraph("Tên Sản Phẩm", fontHead));
             PdfPCell cellHeadGia = new PdfPCell(new Paragraph("Giá", fontHead));
             PdfPCell cellHeadSoLuong = new PdfPCell(new Paragraph("Số Lượng", fontHead));
+            PdfPCell cellHeadThanhTien = new PdfPCell(new Paragraph("Thành tiền", fontHead));
 
             // Thêm header vào bảng
             table.addCell(cellHeadTenSP);
             table.addCell(cellHeadGia);
             table.addCell(cellHeadSoLuong);
+            table.addCell(cellHeadThanhTien);
 
             // Lấy thông tin sản phẩm từ tblSPHD và thêm vào bảng
             for (int i = 0; i < tblSPHD.getRowCount(); i++) {
                 PdfPCell cellSP = new PdfPCell(new Paragraph(tblSPHD.getValueAt(i, 1).toString(), font));
                 PdfPCell cellSL = new PdfPCell(new Paragraph(tblSPHD.getValueAt(i, 2).toString(), font));
                 PdfPCell cellGia = new PdfPCell(new Paragraph(tblSPHD.getValueAt(i, 3).toString(), font));
+                PdfPCell cellThanhTien = new PdfPCell(new Paragraph(tblSPHD.getValueAt(i, 4).toString(), font));
 
                 // Loại bỏ đường viền cho từng ô trong dòng (trừ hàng header)
                 cellSP.setBorder(PdfPCell.NO_BORDER);
                 cellSL.setBorder(PdfPCell.NO_BORDER);
                 cellGia.setBorder(PdfPCell.NO_BORDER);
+                cellThanhTien.setBorder(PdfPCell.NO_BORDER);
 
                 table.addCell(cellSP);
                 table.addCell(cellSL);
                 table.addCell(cellGia);
+                table.addCell(cellThanhTien);
+                
             }
 
             
@@ -1511,9 +1520,11 @@ public class GuiBanHang extends JFrame implements ActionListener, MouseListener 
             
             // Đóng document
             document.close();
+            
 
             // Hiển thị thông báo thành công
             JOptionPane.showMessageDialog(this, "Hóa đơn đã được xuất thành công.");
+            openPdfFile(fileName);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -1526,6 +1537,16 @@ public class GuiBanHang extends JFrame implements ActionListener, MouseListener 
 		btnSuDungDiemTL.setText(isMode ? "Sử dụng điểm" : "Trở lại");
 	}
 
+	private static void openPdfFile(String filePath) throws IOException {
+        File pdfFile = new File(filePath);
+
+        if (pdfFile.exists()) {
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(pdfFile);
+        } else {
+            System.out.println("The specified PDF file does not exist.");
+        }
+    }
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub

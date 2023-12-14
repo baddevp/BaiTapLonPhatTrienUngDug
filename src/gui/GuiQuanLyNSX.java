@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
@@ -29,6 +32,7 @@ import connectDB.ConnectDB;
 import dao.DAO_NSX;
 import entity.MauSac;
 import entity.NhaSanXuat;
+import entity.NhanVien;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -50,7 +54,6 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
 	private JTextField txtTimKiem;
 	private DefaultTableModel modelNSX;
 	private JTable tblNSX;
-	private JTextField txtTrangThai;
 	private ButtonGroup group;
 	private DAO_NSX nsx_dao;
 	private JButton btnDatLai;
@@ -207,6 +210,24 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
                 }
             }
         });
+				txtTimKiem.addKeyListener((KeyListener) new KeyAdapter() {
+					@Override
+					public void keyReleased(KeyEvent e) {
+						String tuKhoa = txtTimKiem.getText().trim();
+						
+						if (tuKhoa.equals("")) {
+							modelNSX.setRowCount(0);
+							DocDuLieuDatabase();
+
+						}
+						else {
+							timKiemTheoMaNSX(tuKhoa);
+							}
+						}
+						
+						
+
+				});
 				
 		
 		JPanel pnlTacVu = new JPanel();
@@ -281,13 +302,6 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
 		// String row[] = {"KH001","Nguyễn Văn B","0123456789","0","Thường"," "};
 		// modelKH.addRow(row);
 		pnlBangNSX.add(jScrollPane);
-		
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(10, 945, 1894, 20);
-		contentPane.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
 		
 		//
 		tblNSX.addMouseListener(this);
@@ -368,7 +382,10 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
 			}
 		}if (o.equals(btnLuu)) {
 			if (btnThem.getText().equals("Hủy")) {
-				themNSX();
+				if(validData()) {
+					themNSX();
+				}
+				
 			}
 			if (btnSua.getText().equals("Hủy")) {
 				if (validData()) {
@@ -542,8 +559,8 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
 			return false;
 		}
 		if (!thanhPho.matches(
-				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
-			showMessage(txtThanhPho, "Tên thành phố bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ]*\\s?)+$")) {
+			showMessage(txtThanhPho, "Tên thành phố bao gồm chữ cái, không bao gồm chữ số, ký tự đặc biệt!");
 			return false;
 		}
 		if (email.length() == 0) {
@@ -555,8 +572,8 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
 			showMessage(txtEmail, "Vui lòng nhập lại email!");
 			return false;
 		}
-		if (sdt.length() == 0) {
-			showMessage(txtSDT, "Nhập SDT nhà sản xuất!");
+		if (sdt.length() < 10 || sdt.length() > 11) {
+			showMessage(txtSDT, "Nhập SDT gồm 10 hoặc 11 chữ số!");
 			return false;}
 		if (!sdt.matches("^(0[0-9]{9,10})$") ) {
 			showMessage(txtSDT, "Số điện thoại gồm 10 hoặc 11 chữ số, bắt đầu bằng 0!");
@@ -568,5 +585,16 @@ public class GuiQuanLyNSX extends JFrame implements ActionListener, MouseListene
 	private void showMessage(JTextField txt, String message) {
 		txt.setText("");
 		JOptionPane.showMessageDialog(this, message);
+	}
+	// Tìm hóa đơn trả hàng theo mã
+	public void timKiemTheoMaNSX(String tuKhoa) {
+		modelNSX.setRowCount(0);
+		for (NhaSanXuat nsx : nsx_dao.getAllNSX()) {
+			String maNSX = nsx.getMaNSX();
+			if (maNSX.toLowerCase().contains(tuKhoa)) {
+				modelNSX.addRow(new Object[] {nsx.getMaNSX(), nsx.getTenNSX(),nsx.getThanhPho(),
+	                      nsx.getEmail(), nsx.getSdt()});
+			}
+		}
 	}
 }

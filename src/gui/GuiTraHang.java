@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -16,7 +17,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -1499,7 +1502,7 @@ public class GuiTraHang extends JFrame implements ActionListener, MouseListener 
         	
             // Đặt tên file PDF và tạo đối tượng PdfWriter
         	String maHD = txtMaTraHang.getText();
-            String fileName = "HoaDon_" + maHD + ".pdf";
+            String fileName = "TH_" +new SimpleDateFormat("yyyyMMdd").format(new Date())+ "_" + maHD + ".pdf";
             PdfWriter.getInstance(document, new FileOutputStream(fileName));
 
             // Mở document để bắt đầu viết
@@ -1679,11 +1682,23 @@ public class GuiTraHang extends JFrame implements ActionListener, MouseListener 
 
             // Hiển thị thông báo thành công
             JOptionPane.showMessageDialog(this, "Hóa đơn đã được xuất thành công.");
+            openPdfFile(fileName);
 
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi xuất hóa đơn.");
         }
     }
+	private static void openPdfFile(String filePath) throws IOException {
+        File pdfFile = new File(filePath);
+
+        if (pdfFile.exists()) {
+            Desktop desktop = Desktop.getDesktop();
+            desktop.open(pdfFile);
+        } else {
+            System.out.println("The specified PDF file does not exist.");
+        }
+    }
+	
 	
 }

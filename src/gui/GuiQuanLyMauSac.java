@@ -46,7 +46,7 @@ public class GuiQuanLyMauSac extends JFrame implements ActionListener, MouseList
 	private JTextField txtTimKiem;
 	private DefaultTableModel modelMS;
 	private JTable tblMS;
-	private JTextField txtTrangThai;
+
 	private ButtonGroup group;
 	private JRadioButton radTenMau;
 	private JRadioButton radMaMau;
@@ -253,13 +253,6 @@ public class GuiQuanLyMauSac extends JFrame implements ActionListener, MouseList
 		tblMS.setFont(font2);
 		tblMS.setRowHeight(35);
 		pnlBangMS.add(jScrollPane);
-
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(10, 945, 1894, 20);
-		contentPane.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
 		
 		//
 		tblMS.addMouseListener(this);
@@ -336,7 +329,10 @@ public class GuiQuanLyMauSac extends JFrame implements ActionListener, MouseList
 			}
 		}if (o.equals(btnLuu)) {
 			if (btnThem.getText().equals("Hủy")) {
-				themMauSac();
+				if(validData()) {
+					themMauSac();
+				}
+			
 			}
 			if (btnSua.getText().equals("Hủy")) {
 				if (validData()) {

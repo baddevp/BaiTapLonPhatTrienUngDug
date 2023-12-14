@@ -171,7 +171,6 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 	private JTextField txtTimKiem;
 	private DefaultTableModel modelKH;
 	private JTable tblKH;
-	private JTextField txtTrangThai;
 	private JDateChooser dtmNgaySinh;
 	private JDateChooser dtmNgayVaoLam;
 	private JButton btnChonAnh;
@@ -478,12 +477,6 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		tblKH.setRowHeight(35);
 		pnlBangKH.add(jScrollPane);
 
-		txtTrangThai = new JTextField("Không có hoạt động nào gần nhất");
-		txtTrangThai.setForeground(Color.red);
-		txtTrangThai.setHorizontalAlignment(SwingConstants.CENTER);
-		txtTrangThai.setBounds(10, 950, 1894, 20);
-		contentPane.add(txtTrangThai);
-		txtTrangThai.setColumns(10);
 
 		btnDatLai.addActionListener(this);
 		btnChonAnh.addActionListener(this);
@@ -540,11 +533,8 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		if (o.equals(btnDatLai)) {
 			xoaRong();
 		}
-		if (o.equals(btnChonAnh)) {
-			
+		if (o.equals(btnChonAnh)) {	
 				chonAnh();
-		
-
 		}
 		if (o.equals(btnThem)) {
 			if (btnThem.getText().equals("Thêm")) {
@@ -595,7 +585,9 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 		}
 		if (o.equals(btnLuu)) {
 			if (btnThem.getText().equals("Hủy")) {
-				themNV();
+				if (validData()) {
+					themNV();
+				}	
 			}
 			if (btnSua.getText().equals("Hủy")) {
 				if (validData()) {
@@ -633,7 +625,7 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 					if (nhanvien_dao.updateTTNhanVien(nv)) {
 						modelKH.setRowCount(0);
 						DocDuLieuDatabase();
-						JOptionPane.showMessageDialog(this, "Sửa thông tin màu sắc thành công");
+						JOptionPane.showMessageDialog(this, "Sửa thông tin nhân viên thành công");
 						dongMoNhapLieu(false);
 						btnSua.setText("Sửa");
 						btnThem.setEnabled(true);
@@ -783,14 +775,32 @@ public class GuiQuanLyNhanVien extends JFrame implements ActionListener, MouseLi
 	}
 
 	private boolean validData() {
-		String tenMau = txtTenNV.getText().trim();
-		if (tenMau.length() == 0) {
-			showMessage(txtTenNV, "Nhập tên màu sắc!");
+		String tenNV = txtTenNV.getText().trim();
+		String cccd = txtCCCD.getText().trim();
+		String sdt = txtSDT.getText().trim();
+		
+		
+		if (tenNV.length() == 0) {
+			showMessage(txtTenNV, "Nhập tên nhân viên!");
 			return false;
 		}
-		if (!tenMau.matches(
-				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ\\d]*\\s?)+$")) {
-			showMessage(txtTenNV, "Tên màu sắc bao gồm chữ cái, chữ số tiếng Việt, không bao gồm ký tự đặc biệt!");
+		if (!tenNV.matches(
+				"^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸa-záàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệóòỏõọôốồổỗộơớờởỡợíìỉĩịúùủũụưứừửữựýỳỷỹỵđ]*\\s?)+$")) {
+			showMessage(txtTenNV, "Tên nhân viên bao gồm chữ cái, không bao gồm chữ số tiếng Việt,  ký tự đặc biệt!");
+			return false;
+		}
+		if (sdt.length() < 10 || sdt.length() > 11) {
+			showMessage(txtSDT, "Nhập SDT gồm 10 hoặc 11 chữ số!");
+			return false;}
+		if (!sdt.matches("^(0[0-9]{9,10})$") ) {
+			showMessage(txtSDT, "Số điện thoại gồm 10 hoặc 11 chữ số, bắt đầu bằng 0!");
+			return false;
+		}
+		if (cccd.length() != 12) {
+			showMessage(txtCCCD, "Nhập CCCD gồm 12 chữ số!");
+			return false;}
+		if (!cccd.matches("^([0-9]{12})$") ) {
+			showMessage(txtCCCD, "Nhập CCCD gồm 12 chữ số!");
 			return false;
 		}
 

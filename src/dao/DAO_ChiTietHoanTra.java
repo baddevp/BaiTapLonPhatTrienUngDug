@@ -154,5 +154,24 @@ public class DAO_ChiTietHoanTra {
 		}
 		return false;
 	}
-
+	public int laySoLuongSanPhamDaTra(String maHD, String maSP) {
+		int sl = 0;
+		ConnectDB.getInstance();
+		Connection con = ConnectDB.getConnection();
+		try {
+			PreparedStatement pstm = con.prepareStatement("select SOLUONGTRA from CHITIETHOANTRA where MAYCTH = ? AND MASP = ?");
+			pstm.setString(1, maHD);
+			pstm.setString(2, maSP);
+			ResultSet rs = pstm.executeQuery();
+			while (rs.next()) {
+				
+				sl += rs.getInt("SOLUONGTRA");
+				
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		return sl;
+	}
 }
